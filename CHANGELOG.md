@@ -5,6 +5,46 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2024-12-13
+
+### Added
+- **Enhanced /design Command** - Intelligent mockup integration and production-quality specs
+  - `--mockup [path]` - Analyze local screenshot for design extraction
+  - `--figma [FILE_KEY:NODE_ID]` - Fetch Figma designs via MCP integration
+  - `--research [competitor]` - Competitor analysis for inspiration
+  - `--quick` - Fast mode for simple features
+
+- **Mockup Analysis Process** - AI-powered visual extraction
+  - Visual element identification (headers, sections, components)
+  - Design token extraction (colors, typography, spacing, corner radius)
+  - Component hierarchy mapping to design system
+  - Interaction inference (tap targets, scroll behavior, gestures)
+
+- **Production-Quality SPEC Template** - 12 comprehensive sections
+  1. Overview (User Stories, Success Metrics)
+  2. Visual Design (ASCII from Mockup, Design Tokens)
+  3. Component Hierarchy (Tree + Specifications)
+  4. User Interactions (Actions Matrix, Navigation Flows)
+  5. State Management (Screen State, State Transitions)
+  6. Animations & Micro-interactions
+  7. API Requirements (RPC signatures, DTOs)
+  8. Accessibility (A11y requirements)
+  9. Performance Requirements
+  10. Testing Requirements
+  11. Mockup References
+  12. Implementation Checklist
+
+- **Spec Quality Scoring** - 100-point quality system
+  - Completeness (40 points): All sections filled
+  - Clarity (30 points): Unambiguous specifications
+  - Implementation Ready (30 points): Actionable for developers
+
+- **Implementation Brief** - Output for /implement command
+  - Priority layers identification
+  - Effort estimates
+  - Critical design decisions
+  - Suggested starting points
+
 ## [1.1.0] - 2024-12-13
 
 ### Added
