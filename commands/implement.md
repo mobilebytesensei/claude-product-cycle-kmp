@@ -14,6 +14,11 @@
 │                             Git → Validate → Server → Client →      │
 │                             Feature → Build → Test → Lint → PR      │
 │                                                                      │
+│  Layer Selection (single PR):                                        │
+│  /implement [F] --layers server,client  → Skip feature layer        │
+│  /implement [F] --skip-server           → Skip server layer         │
+│  /implement [F] --only feature          → Only UI layer             │
+│                                                                      │
 │  OR use layer commands independently:                                │
 │  /server [Feature]        → Backend/Supabase layer                  │
 │  /client [Feature]        → Network + Data + Domain layers          │
@@ -38,7 +43,7 @@
 
 ```
 /implement                       → Show feature status list
-/implement [Feature]             → Full E2E implementation
+/implement [Feature]             → Full E2E implementation (all layers)
 /implement [Feature] --quick     → Quick mode (skip validations)
 /implement [Feature] --no-git    → Skip git integration
 /implement [Feature] --no-test   → Skip test generation
@@ -46,6 +51,215 @@
 /implement improve [Feature]     → Improve existing feature
 /implement reverify [Feature]    → Verify only, no implementation
 /implement rollback [Feature]    → Undo feature implementation
+
+LAYER SELECTION (Single PR with selected layers):
+/implement [Feature] --layers server,client       → Only server + client
+/implement [Feature] --layers client,feature      → Only client + feature
+/implement [Feature] --layers server              → Only server layer
+/implement [Feature] --skip-server                → Skip server layer
+/implement [Feature] --skip-client                → Skip client layer
+/implement [Feature] --skip-feature               → Skip feature layer
+/implement [Feature] --only server                → Alias for --layers server
+/implement [Feature] --only client                → Alias for --layers client
+/implement [Feature] --only feature               → Alias for --layers feature
+```
+
+---
+
+## 🎯 LAYER SELECTION
+
+**Run specific layers while still creating a single PR with all changes.**
+
+### Use Cases
+
+| Scenario | Command | Why |
+|----------|---------|-----|
+| Backend already exists (API provided) | `--skip-server` | Skip server, implement client + feature |
+| Only need KMP code (no UI yet) | `--layers server,client` | Skip feature layer |
+| Quick UI prototype (mock data) | `--only feature` | Only implement UI with mocks |
+| API-first development | `--only server` | Implement backend first |
+| Feature exists, need new screen | `--skip-server --skip-client` | Only feature layer |
+
+### Layer Selection Workflow
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│  LAYER SELECTION - SINGLE PR                                         │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  /implement Reviews --layers server,client                           │
+│                                                                      │
+│  ┌───────┐  ┌────────┐  ┌────────┐  ┌────────┐  ╔═════════╗        │
+│  │  GIT  │─▶│VALIDATE│─▶│ SERVER │─▶│ CLIENT │  ║ FEATURE ║        │
+│  └───────┘  └────────┘  └───┬────┘  └───┬────┘  ║ SKIPPED ║        │
+│   branch     deps           │           │       ╚═════════╝        │
+│                        [checkpoint] [checkpoint]                    │
+│                             │           │                           │
+│                         ┌───▼───┐   ┌───▼───┐                       │
+│                         │ BUILD │   │ BUILD │                       │
+│                         │ TEST  │   │ TEST  │                       │
+│                         │ LINT  │   │ LINT  │                       │
+│                         │COMMIT │   │COMMIT │                       │
+│                         └───────┘   └───┬───┘                       │
+│                                         │                           │
+│                                    ┌────▼────┐                      │
+│                                    │   PR    │                      │
+│                                    │  READY  │                      │
+│                                    └─────────┘                      │
+│                                                                      │
+│  Result: Single PR with server + client layers                       │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Examples
+
+**Skip server (backend already exists):**
+```bash
+/implement Reviews --skip-server
+
+# Skipped: Server layer
+# Running: Client → Feature → PR
+# PR contains: client + feature code only
+```
+
+**Only implement backend + data layer:**
+```bash
+/implement Reviews --layers server,client
+
+# Running: Server → Client → PR
+# Skipped: Feature layer
+# PR contains: migration + DTO + service + repository + usecase
+```
+
+**Quick UI prototype with mocks:**
+```bash
+/implement Reviews --only feature
+
+# Skipped: Server, Client
+# Running: Feature (with mock data)
+# PR contains: ViewModel + Screen + Components
+# Note: Uses mock/preview data until client layer implemented
+```
+
+**Multiple skip flags:**
+```bash
+/implement Reviews --skip-server --skip-client
+
+# Same as: /implement Reviews --only feature
+```
+
+### Layer Dependencies
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│  LAYER DEPENDENCY CHECK                                              │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  When skipping layers, Claude checks if dependencies exist:          │
+│                                                                      │
+│  --skip-server:                                                      │
+│  ├─ Check: Do required tables/RPCs exist in Supabase?               │
+│  ├─ If YES → Proceed with client                                    │
+│  └─ If NO  → Warn: "Missing: get_reviews RPC. Create manually or    │
+│              include server layer"                                   │
+│                                                                      │
+│  --skip-client:                                                      │
+│  ├─ Check: Do required DTOs/Services exist in core/network?         │
+│  ├─ If YES → Proceed with feature                                   │
+│  └─ If NO  → Create mock service for feature layer                  │
+│              (auto-generates MockReviewService.kt)                   │
+│                                                                      │
+│  --only feature (no client):                                         │
+│  └─ Auto-generates preview/mock data in ViewModel                   │
+│     for UI development without backend                               │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### PR Title Format with Layers
+
+```
+Full implementation:
+  feat(reviews): Add reviews feature
+
+Partial layers:
+  feat(reviews): Add server + client layers
+  feat(reviews): Add client + feature layers
+  feat(reviews): Add server layer
+  feat(reviews): Add feature layer (UI only)
+```
+
+### Config-Based Defaults
+
+Layer selection can be configured in `.claude-product-cycle.yaml`:
+
+```yaml
+# .claude-product-cycle.yaml
+implementation:
+  layers:
+    server: true                    # Enable/disable server layer
+    client: true                    # Enable/disable client layer
+    feature: true                   # Enable/disable feature layer
+  default_layers: "all"             # "all" | "prompt" | "server,client" | etc.
+  generate_mocks: true              # Auto-generate mocks when skipping client
+  generate_tests: true              # Auto-generate tests
+  auto_build: true                  # Run builds after each layer
+  auto_lint: true                   # Run lint/format after code
+```
+
+**Behavior based on config:**
+
+| Config `default_layers` | `/implement Reviews` behavior |
+|-------------------------|-------------------------------|
+| `"all"` | Run all enabled layers (default) |
+| `"prompt"` | Ask user which layers to run |
+| `"server,client"` | Run only server + client |
+| `"preset:backend-data"` | Use named preset |
+
+**Disabled layers are always skipped:**
+```yaml
+implementation:
+  layers:
+    server: false    # Server layer disabled for this project
+```
+Running `/implement Reviews` will automatically skip server layer.
+
+**CLI flags override config:**
+```bash
+# Config says default_layers: "all"
+# But you can still override per-command:
+/implement Reviews --only server
+```
+
+### Setup During Project Init
+
+Configure layers during project setup:
+
+```bash
+# Interactive mode - prompts for all options
+./scripts/init-project.sh -i
+
+# Command line options
+./scripts/init-project.sh \
+  --name "My App" \
+  --package "com.example.app" \
+  --output "../my-app" \
+  --backend supabase \
+  --default-layers "server,client"
+
+# Use presets
+./scripts/init-project.sh \
+  --name "My App" \
+  --package "com.example.app" \
+  --output "../my-app" \
+  --preset frontend-only    # Using external API
+
+# Available presets:
+# --preset api-first       → Server only
+# --preset backend-data    → Server + Client
+# --preset frontend-only   → Client + Feature
+# --preset ui-prototype    → Feature with mocks
 ```
 
 ---
