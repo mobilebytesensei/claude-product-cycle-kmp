@@ -137,7 +137,7 @@ architecture:
     - feature
 
 backend:
-  type: "supabase"  # supabase | firebase | custom
+  type: "supabase"  # supabase | firebase | custom (contribute more!)
   has_data_pipeline: false
 
 features: []  # Will be populated as you add features

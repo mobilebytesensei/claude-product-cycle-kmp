@@ -2,7 +2,7 @@
 # Copy this file to your project root as .claude-product-cycle.yaml
 
 template:
-  version: "1.0.0"
+  version: "1.1.0"
   source: "github.com/mobilebytesensei/claude-product-cycle-kmp"
 
 project:
@@ -22,6 +22,64 @@ backend:
   type: "supabase"                  # supabase | firebase | custom
   has_data_pipeline: false          # true if you have local data processing
 
+# ═══════════════════════════════════════════════════════════════════════
+# IMPLEMENTATION LAYERS CONFIGURATION
+# ═══════════════════════════════════════════════════════════════════════
+# Configure which layers to enable for /implement command
+# This sets PROJECT DEFAULTS - can still override per-feature with flags
+
+implementation:
+  # Enable/disable layers for this project
+  layers:
+    server: true                    # Backend/DB layer (migrations, RPCs)
+    client: true                    # KMP data layer (DTO, Service, Repo, UseCase)
+    feature: true                   # UI layer (ViewModel, Screen, Components)
+
+  # Default behavior when running /implement [Feature]
+  # Options: "all" | "prompt" | "server,client" | "client,feature" | etc.
+  default_layers: "all"
+
+  # Auto-generate mocks when skipping client layer?
+  generate_mocks: true
+
+  # Auto-generate tests for each layer?
+  generate_tests: true
+
+  # Run build verification after each layer?
+  auto_build: true
+
+  # Run lint/format after each layer?
+  auto_lint: true
+
+# ═══════════════════════════════════════════════════════════════════════
+# LAYER PRESETS (Optional)
+# ═══════════════════════════════════════════════════════════════════════
+# Define named presets for common layer combinations
+
+presets:
+  # API-first: Only backend work
+  api-first:
+    layers: ["server"]
+    description: "Backend only - tables, RPCs, migrations"
+
+  # Full-stack without UI
+  backend-data:
+    layers: ["server", "client"]
+    description: "Backend + KMP data layer, no UI"
+
+  # Frontend only (external API)
+  frontend-only:
+    layers: ["client", "feature"]
+    description: "KMP + UI, backend already exists"
+
+  # UI prototype with mocks
+  ui-prototype:
+    layers: ["feature"]
+    generate_mocks: true
+    description: "Quick UI with mock data"
+
+# ═══════════════════════════════════════════════════════════════════════
+
 # Features list - populated as you add features
 features:
   - name: "Home"
@@ -30,3 +88,32 @@ features:
     status: "in_progress"
   - name: "Settings"
     status: "not_started"
+
+# ═══════════════════════════════════════════════════════════════════════
+# EXAMPLE CONFIGURATIONS
+# ═══════════════════════════════════════════════════════════════════════
+#
+# 1. Using External API (no server layer):
+#    implementation:
+#      layers:
+#        server: false              # Disable server layer entirely
+#        client: true
+#        feature: true
+#      default_layers: "client,feature"
+#
+# 2. Library/SDK Project (no UI):
+#    implementation:
+#      layers:
+#        server: true
+#        client: true
+#        feature: false             # No UI layer
+#      default_layers: "server,client"
+#
+# 3. Always prompt for layer selection:
+#    implementation:
+#      default_layers: "prompt"     # Ask every time
+#
+# 4. Use preset by default:
+#    implementation:
+#      default_layers: "preset:backend-data"
+#

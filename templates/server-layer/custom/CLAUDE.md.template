@@ -1,0 +1,266 @@
+# Custom Server Layer - Claude Instructions
+
+This file provides context for Claude Code sessions working on a custom backend.
+
+---
+
+## Quick Context
+
+```
+Location: claude-product-cycle/server-layer/custom/
+Purpose:  Custom backend (REST API, GraphQL, or other)
+```
+
+---
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│  KMP Client                                                          │
+│  └─→ Ktor Client                                                    │
+│       └─→ Custom API (REST/GraphQL)                                 │
+│            └─→ Your Database (PostgreSQL, MySQL, MongoDB, etc.)     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Directory Structure
+
+```
+custom/
+├── CLAUDE.md           # This file
+├── api/                # API definitions
+│   ├── openapi.yaml    # OpenAPI spec (if REST)
+│   └── schema.graphql  # GraphQL schema (if GraphQL)
+├── migrations/         # Database migrations
+│   └── YYYYMMDD_NNN_description.sql
+├── scripts/            # Deployment scripts
+│   ├── deploy.sh
+│   └── migrate.sh
+└── .env                # Credentials (gitignored)
+```
+
+---
+
+## API Design Patterns
+
+### REST Endpoints
+
+```yaml
+# openapi.yaml example
+paths:
+  /api/v1/movies:
+    get:
+      summary: List movies
+      parameters:
+        - name: mood_id
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of movies
+
+  /api/v1/movies/{id}:
+    get:
+      summary: Get movie by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+```
+
+### GraphQL Schema
+
+```graphql
+# schema.graphql example
+type Query {
+  movies(moodId: ID, limit: Int = 20, offset: Int = 0): [Movie!]!
+  movie(id: ID!): Movie
+  moods: [Mood!]!
+}
+
+type Mutation {
+  addToWatchlist(movieId: ID!): WatchlistItem!
+  removeFromWatchlist(movieId: ID!): Boolean!
+}
+
+type Movie {
+  id: ID!
+  title: String!
+  overview: String
+  posterPath: String
+  releaseDate: String
+  rating: Float
+  moods: [Mood!]!
+}
+
+type Mood {
+  id: ID!
+  name: String!
+  emoji: String!
+}
+```
+
+---
+
+## Migration Template
+
+```sql
+-- =============================================
+-- Migration: YYYYMMDD_NNN_description
+-- Purpose: Brief description
+-- =============================================
+
+-- 1. Create tables
+CREATE TABLE IF NOT EXISTS movies (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(255) NOT NULL,
+    overview TEXT,
+    poster_path VARCHAR(255),
+    release_date DATE,
+    rating DECIMAL(3,1),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. Create indexes
+CREATE INDEX IF NOT EXISTS idx_movies_rating ON movies(rating DESC);
+CREATE INDEX IF NOT EXISTS idx_movies_release ON movies(release_date DESC);
+
+-- 3. Create junction tables
+CREATE TABLE IF NOT EXISTS movie_moods (
+    movie_id UUID REFERENCES movies(id) ON DELETE CASCADE,
+    mood_id UUID REFERENCES moods(id) ON DELETE CASCADE,
+    PRIMARY KEY (movie_id, mood_id)
+);
+```
+
+---
+
+## KMP Client Integration
+
+### Network Service
+
+```kotlin
+// core/network/service/MovieService.kt
+interface MovieService {
+    suspend fun getMovies(moodId: String?, limit: Int, offset: Int): List<MovieDto>
+    suspend fun getMovieById(id: String): MovieDto?
+    suspend fun addToWatchlist(movieId: String): WatchlistItemDto
+}
+
+// Implementation using Ktor
+class MovieServiceImpl(
+    private val client: HttpClient,
+    private val baseUrl: String,
+) : MovieService {
+    override suspend fun getMovies(moodId: String?, limit: Int, offset: Int): List<MovieDto> {
+        return client.get("$baseUrl/api/v1/movies") {
+            moodId?.let { parameter("mood_id", it) }
+            parameter("limit", limit)
+            parameter("offset", offset)
+        }.body()
+    }
+}
+```
+
+### DTO Definitions
+
+```kotlin
+// core/network/model/MovieDto.kt
+@Serializable
+data class MovieDto(
+    val id: String,
+    val title: String,
+    val overview: String?,
+    @SerialName("poster_path")
+    val posterPath: String?,
+    @SerialName("release_date")
+    val releaseDate: String?,
+    val rating: Double?,
+)
+```
+
+---
+
+## Authentication Patterns
+
+### JWT Authentication
+
+```kotlin
+// Add auth interceptor
+val client = HttpClient {
+    install(Auth) {
+        bearer {
+            loadTokens {
+                BearerTokens(accessToken, refreshToken)
+            }
+            refreshTokens {
+                // Refresh logic
+            }
+        }
+    }
+}
+```
+
+### API Key Authentication
+
+```kotlin
+val client = HttpClient {
+    defaultRequest {
+        header("X-API-Key", apiKey)
+    }
+}
+```
+
+---
+
+## Deployment
+
+```bash
+# Run migrations
+./scripts/migrate.sh
+
+# Deploy API
+./scripts/deploy.sh
+
+# Local development
+docker-compose up -d
+```
+
+---
+
+## Environment Variables
+
+```bash
+# .env
+DATABASE_URL=postgresql://user:pass@host:5432/dbname
+API_SECRET=your-secret-key
+EXTERNAL_API_KEY=your-api-key
+```
+
+---
+
+## Adding New Endpoints
+
+1. Define endpoint in API spec (openapi.yaml or schema.graphql)
+2. Create migration if new tables needed
+3. Implement server-side handler
+4. Add to KMP service interface
+5. Implement in service class
+6. Add DTOs if needed
+7. Test with curl/Postman

@@ -1,0 +1,200 @@
+# Firebase Server Layer - Claude Instructions
+
+This file provides context for Claude Code sessions working on the Firebase backend.
+
+---
+
+## Quick Context
+
+```
+Location: claude-product-cycle/server-layer/firebase/
+Purpose:  Firebase backend (Firestore, Functions, Auth)
+```
+
+---
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│  KMP Client                                                          │
+│  └─→ Firebase SDK (KMP)                                             │
+│       ├─→ Firestore (NoSQL database)                                │
+│       ├─→ Cloud Functions (serverless)                              │
+│       └─→ Firebase Auth                                             │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Directory Structure
+
+```
+firebase/
+├── CLAUDE.md           # This file
+├── firestore.rules     # Security rules
+├── firestore.indexes.json  # Composite indexes
+├── functions/          # Cloud Functions
+│   ├── src/
+│   │   ├── index.ts
+│   │   └── ...
+│   ├── package.json
+│   └── tsconfig.json
+└── .env                # Credentials (gitignored)
+```
+
+---
+
+## Firebase CLI Commands
+
+```bash
+firebase deploy --only firestore:rules    # Deploy rules
+firebase deploy --only firestore:indexes  # Deploy indexes
+firebase deploy --only functions          # Deploy functions
+firebase emulators:start                  # Local development
+```
+
+---
+
+## Collection Naming
+
+```
+users/{userId}
+movies/{movieId}
+user_data/{userId}/watchlist/{movieId}
+user_data/{userId}/favorites/{movieId}
+cache/{cacheType}
+```
+
+---
+
+## Security Rules Template
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users collection
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth.uid == userId;
+    }
+
+    // User data subcollections
+    match /user_data/{userId}/{document=**} {
+      allow read, write: if request.auth.uid == userId;
+    }
+
+    // Public read collections
+    match /movies/{movieId} {
+      allow read: if true;
+      allow write: if false; // Admin only via functions
+    }
+
+    // Cache collections
+    match /cache/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}
+```
+
+---
+
+## Cloud Function Template
+
+```typescript
+import * as functions from 'firebase-functions';
+import * as admin from 'firebase-admin';
+
+admin.initializeApp();
+const db = admin.firestore();
+
+export const getMoviesByMood = functions.https.onCall(async (data, context) => {
+  // Verify authentication
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be logged in');
+  }
+
+  const { moodId, limit = 20, offset = 0 } = data;
+
+  const snapshot = await db
+    .collection('movies')
+    .where('moodIds', 'array-contains', moodId)
+    .orderBy('popularity', 'desc')
+    .limit(limit)
+    .offset(offset)
+    .get();
+
+  return snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
+});
+```
+
+---
+
+## Common Patterns
+
+### User-Generated Data
+```typescript
+// Store in user_data subcollection
+await db.collection('user_data').doc(userId)
+  .collection('watchlist').doc(movieId)
+  .set({ addedAt: admin.firestore.FieldValue.serverTimestamp() });
+```
+
+### Auto-Generated via Triggers
+```typescript
+// Count fields, activity feeds
+export const updateWatchlistCount = functions.firestore
+  .document('user_data/{userId}/watchlist/{movieId}')
+  .onWrite(async (change, context) => {
+    const { userId } = context.params;
+    const watchlistRef = db.collection('user_data').doc(userId).collection('watchlist');
+    const snapshot = await watchlistRef.count().get();
+    await db.collection('users').doc(userId).update({
+      watchlistCount: snapshot.data().count
+    });
+  });
+```
+
+### Cache Pattern
+```typescript
+// Pre-computed cache collections
+export const rebuildMoodCache = functions.pubsub
+  .schedule('0 */6 * * *')  // Every 6 hours
+  .onRun(async () => {
+    // Rebuild cache logic
+  });
+```
+
+---
+
+## Deployment
+
+```bash
+# Deploy everything
+firebase deploy
+
+# Deploy specific services
+firebase deploy --only firestore
+firebase deploy --only functions:getMoviesByMood
+
+# Local testing
+firebase emulators:start --only firestore,functions
+```
+
+---
+
+## Environment Variables
+
+```bash
+# Set function config
+firebase functions:config:set api.key="YOUR_API_KEY"
+
+# Get current config
+firebase functions:config:get
+```
