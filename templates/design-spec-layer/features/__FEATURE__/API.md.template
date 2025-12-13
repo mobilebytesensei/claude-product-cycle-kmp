@@ -1,0 +1,77 @@
+# {{FEATURE_NAME}} - API Contract
+
+> API definitions for {{FEATURE_NAME}} feature.
+> **Last Updated**: {{DATE}}
+
+---
+
+## Required RPCs
+
+| RPC | Purpose | Status |
+|-----|---------|--------|
+| `get_{{feature_name_lower}}_data` | Main data fetch | ❌ Not Created |
+
+---
+
+## RPC Signatures
+
+### get_{{feature_name_lower}}_data
+
+```sql
+CREATE OR REPLACE FUNCTION get_{{feature_name_lower}}_data(
+    p_user_id UUID,
+    p_limit INTEGER DEFAULT 20,
+    p_offset INTEGER DEFAULT 0
+)
+RETURNS TABLE (
+    id UUID,
+    -- columns
+    created_at TIMESTAMPTZ
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT ...
+    FROM ...
+    WHERE ...
+    LIMIT p_limit
+    OFFSET p_offset;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+---
+
+## DTOs
+
+### {{FEATURE_NAME}}Dto
+
+```kotlin
+@Serializable
+data class {{FEATURE_NAME}}Dto(
+    @SerialName("id") val id: String,
+    // fields
+    @SerialName("created_at") val createdAt: String,
+)
+```
+
+---
+
+## Service Interface
+
+```kotlin
+interface {{FEATURE_NAME}}Service {
+    fun get{{FEATURE_NAME}}Flow(
+        userId: String,
+        limit: Int,
+        offset: Int,
+    ): Flow<List<{{FEATURE_NAME}}Dto>>
+}
+```
+
+---
+
+## Changelog
+
+| Date | Change |
+|------|--------|
+| {{DATE}} | Initial API design |

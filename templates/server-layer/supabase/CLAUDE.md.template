@@ -1,0 +1,131 @@
+# Supabase Server Layer - Claude Instructions
+
+This file provides context for Claude Code sessions working on the backend.
+
+---
+
+## Quick Context
+
+```
+Location: claude-product-cycle/server-layer/supabase/
+Purpose:  PostgreSQL backend via Supabase
+```
+
+---
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│  KMP Client                                                          │
+│  └─→ Supabase Client SDK                                            │
+│       └─→ RPCs (PostgreSQL functions)                                │
+│            └─→ Tables with RLS policies                              │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Directory Structure
+
+```
+supabase/
+├── CLAUDE.md           # This file
+├── master.py           # Deployment orchestrator
+├── migrations/         # SQL migration files
+│   └── YYYYMMDD_NNN_description.sql
+├── data/               # Data sync scripts (if needed)
+│   ├── sync_catalogs.py
+│   └── sync_movies.py
+└── .env                # Credentials (gitignored)
+```
+
+---
+
+## MCP Tools
+
+```bash
+mcp__supabase__list_tables           # List all tables
+mcp__supabase__execute_sql("...")    # Run SQL query
+mcp__supabase__apply_migration(...)  # Apply migration
+mcp__supabase__get_advisors("security")  # Security check
+```
+
+---
+
+## Migration Naming
+
+```
+YYYYMMDD_NNN_description.sql
+Example: 20251213_001_add_user_reviews.sql
+```
+
+---
+
+## Migration Template
+
+```sql
+-- =============================================
+-- Migration: YYYYMMDD_NNN_description
+-- Purpose: Brief description
+-- =============================================
+
+-- 1. Create tables
+CREATE TABLE IF NOT EXISTS table_name (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 2. Create indexes
+CREATE INDEX IF NOT EXISTS idx_table_column ON table_name(column);
+
+-- 3. Enable RLS
+ALTER TABLE table_name ENABLE ROW LEVEL SECURITY;
+
+-- 4. Create policies
+CREATE POLICY "policy_name" ON table_name
+    FOR SELECT USING (auth.uid() = user_id);
+
+-- 5. Create RPCs (if needed)
+CREATE OR REPLACE FUNCTION get_data(...)
+RETURNS ... AS $$
+BEGIN
+    -- logic
+END;
+$$ LANGUAGE plpgsql;
+```
+
+---
+
+## Common Patterns
+
+### User-Generated Tables (No Population)
+```sql
+-- user_reviews, user_follows, etc.
+-- App creates data, no sync needed
+```
+
+### Auto-Generated via Triggers
+```sql
+-- Count fields, activity feeds
+CREATE TRIGGER trg_update_count
+AFTER INSERT OR DELETE ON source_table
+FOR EACH ROW EXECUTE FUNCTION update_count();
+```
+
+### Cache Tables (Rebuild RPC)
+```sql
+-- mood_movies_cache, trending_movies
+CREATE FUNCTION rebuild_cache()
+RETURNS INTEGER AS $$ ...
+```
+
+---
+
+## Deployment
+
+```bash
+python3 master.py deploy           # Deploy migrations
+python3 master.py deploy --dry-run # Preview only
+python3 master.py sync --catalogs  # Sync catalog data
+```

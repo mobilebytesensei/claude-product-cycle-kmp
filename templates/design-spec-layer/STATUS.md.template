@@ -1,0 +1,41 @@
+# {{PROJECT_NAME}} - Feature Status
+
+> **Single Source of Truth** for all feature implementation status.
+
+---
+
+## Quick Status
+
+| Phase | Progress | Features |
+|-------|----------|----------|
+| Phase 1 (Core) | 0% | 0/X |
+| Phase 2 (Discovery) | 0% | 0/X |
+| Phase 3 (Social) | 0% | 0/X |
+
+---
+
+## Feature Status Table
+
+| Feature | Server | Client | UI | Status | Command |
+|---------|--------|--------|-----|--------|---------|
+| Feature1 | ❌ | ❌ | ❌ | Not Started | `/implement Feature1` |
+| Feature2 | ❌ | ❌ | ❌ | Not Started | `/implement Feature2` |
+
+---
+
+## Status Legend
+
+| Symbol | Meaning |
+|--------|---------|
+| ✅ | Complete |
+| 🔄 | In Progress |
+| ❌ | Not Started |
+| ⚠️ | Needs Update |
+
+---
+
+## Changelog
+
+| Date | Feature | Change |
+|------|---------|--------|
+| {{DATE}} | Initial | Created status tracker |
