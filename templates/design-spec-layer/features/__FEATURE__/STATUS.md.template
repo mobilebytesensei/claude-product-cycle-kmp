@@ -1,0 +1,55 @@
+# {{FEATURE_NAME}} - Implementation Status
+
+> Implementation progress for {{FEATURE_NAME}} feature.
+
+---
+
+## Status: Not Started
+
+---
+
+## Layer Checklist
+
+### Server Layer
+- [ ] Tables created
+- [ ] RPCs created
+- [ ] RLS policies added
+- [ ] Data populated (if needed)
+
+### Client Layer
+- [ ] DTO created
+- [ ] Service created
+- [ ] Mapper created
+- [ ] Repository created
+- [ ] UseCase created
+- [ ] DI registered
+
+### Feature Layer
+- [ ] State/Event/Action defined
+- [ ] ViewModel created
+- [ ] Screen created
+- [ ] Components created
+- [ ] @Preview added
+- [ ] Navigation registered
+- [ ] DI registered
+
+---
+
+## Files Created
+
+| Layer | File | Status |
+|-------|------|--------|
+| Network | {{FEATURE_NAME}}Dto.kt | ❌ |
+| Network | {{FEATURE_NAME}}Service.kt | ❌ |
+| Data | {{FEATURE_NAME}}Repository.kt | ❌ |
+| Domain | Get{{FEATURE_NAME}}UseCase.kt | ❌ |
+| Feature | {{FEATURE_NAME}}ViewModel.kt | ❌ |
+| Feature | {{FEATURE_NAME}}Screen.kt | ❌ |
+
+---
+
+## Changelog
+
+| Date | Change |
+|------|--------|
+| {{DATE}} | Created status tracker |

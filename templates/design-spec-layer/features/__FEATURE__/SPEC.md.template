@@ -1,0 +1,117 @@
+# {{FEATURE_NAME}} - Feature Specification
+
+> **Purpose**: [One-line description]
+> **User Value**: [Why users need this]
+> **Last Updated**: {{DATE}}
+
+---
+
+## 1. Overview
+
+### 1.1 Feature Summary
+[2-3 sentences describing the feature]
+
+### 1.2 User Stories
+- As a user, I want to [action] so that [benefit]
+- As a user, I want to [action] so that [benefit]
+
+---
+
+## 2. Screen Layout
+
+### 2.1 ASCII Mockup
+
+```
+┌─────────────────────────────────────────┐
+│  ← Back          [Title]            ⋮   │  ← TopBar
+├─────────────────────────────────────────┤
+│                                         │
+│  ┌─────────────────────────────────┐   │
+│  │     Section 1                    │   │
+│  └─────────────────────────────────┘   │
+│                                         │
+│  ┌─────────────────────────────────┐   │
+│  │     Section 2                    │   │
+│  └─────────────────────────────────┘   │
+│                                         │
+└─────────────────────────────────────────┘
+```
+
+### 2.2 Sections Table
+
+| # | Section | Description | API | Priority |
+|---|---------|-------------|-----|----------|
+| 1 | [Name] | [What it shows] | [RPC name] | P0 |
+
+---
+
+## 3. User Interactions
+
+### 3.1 Actions Table
+
+| Action | Trigger | Result | API Call |
+|--------|---------|--------|----------|
+| [Action] | [Trigger] | [Result] | [RPC] |
+
+### 3.2 State Transitions
+
+```
+[Initial] → Loading → [Content | Empty | Error]
+```
+
+---
+
+## 4. UI Components
+
+| Component | Props | Reusable? | Design System? |
+|-----------|-------|-----------|----------------|
+| [Name] | [props] | Yes/No | Use [Component] |
+
+---
+
+## 5. Data Requirements
+
+### 5.1 Domain Model
+
+```kotlin
+data class {{FEATURE_NAME}}(
+    val id: String,
+    // fields
+)
+```
+
+### 5.2 State Model
+
+```kotlin
+data class {{FEATURE_NAME}}State(
+    val isLoading: Boolean = false,
+    val items: List<Item> = emptyList(),
+    val error: String? = null,
+)
+```
+
+---
+
+## 6. API Requirements
+
+| RPC Name | Parameters | Returns | Exists? |
+|----------|------------|---------|---------|
+| [name] | [params] | [type] | ❌ |
+
+---
+
+## 7. Edge Cases
+
+| Scenario | Behavior | UI Feedback |
+|----------|----------|-------------|
+| No internet | Show cached | Toast |
+| Empty results | Show empty state | Illustration |
+| API error | Retry logic | Snackbar |
+
+---
+
+## Changelog
+
+| Date | Change |
+|------|--------|
+| {{DATE}} | Initial spec |

@@ -1,0 +1,32 @@
+# Claude Product Cycle Configuration - Example
+# Copy this file to your project root as .claude-product-cycle.yaml
+
+template:
+  version: "1.0.0"
+  source: "github.com/mobilebytesensei/claude-product-cycle-kmp"
+
+project:
+  name: "My App"                    # Your project name
+  package: "com.example.myapp"      # Your package name
+  type: "kmp"                       # kmp | android | ios | web
+
+architecture:
+  pattern: "clean-mvi"              # Architecture pattern
+  layers:
+    - network                       # API/HTTP layer
+    - data                          # Repository layer
+    - domain                        # UseCase layer
+    - feature                       # UI layer
+
+backend:
+  type: "supabase"                  # supabase | firebase | custom
+  has_data_pipeline: false          # true if you have local data processing
+
+# Features list - populated as you add features
+features:
+  - name: "Home"
+    status: "done"
+  - name: "Profile"
+    status: "in_progress"
+  - name: "Settings"
+    status: "not_started"
