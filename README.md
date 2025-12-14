@@ -151,6 +151,8 @@ features: []  # Will be populated as you add features
 
 ## Commands Reference
 
+> **See**: [COMMANDS.md](COMMANDS.md) for complete command reference with examples
+
 | Command | Model | Description |
 |---------|-------|-------------|
 | `/audit` | Any | Comprehensive feature audit |
