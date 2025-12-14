@@ -1,0 +1,164 @@
+# Feature Audit Report
+
+> **Audit Date**: {{DATE}}
+> **Auditor**: Claude Code
+> **Purpose**: Identify gaps and improvements needed across all features
+> **Project**: {{PROJECT_NAME}}
+
+---
+
+## Executive Summary
+
+| Category | Count | Details |
+|----------|-------|---------|
+| **Total Features** | 0 | 0 Done, 0 In Progress, 0 Planned |
+| **Spec Quality Issues** | 0 | Features needing spec upgrades |
+| **Implementation Gaps** | 0 | Features with missing implementations |
+| **Critical Priority** | 0 | Items requiring immediate attention |
+
+---
+
+## Feature-by-Feature Audit
+
+### Phase 1: Core MVP
+
+#### 1. [Feature Name]
+| Aspect | Status | Issues |
+|--------|--------|--------|
+| **Spec Quality** | None/Basic/Good/Excellent | Missing sections, etc. |
+| **Implementation** | None/Partial/Done | What's implemented |
+| **Figma Reference** | TBD/Linked | Node ID if linked |
+
+**Improvements Needed:**
+- [ ] Item 1
+- [ ] Item 2
+- [ ] Item 3
+
+---
+
+<!-- Repeat for each feature -->
+
+---
+
+## Spec Quality Matrix
+
+| Feature | Sections Present | Missing Sections |
+|---------|------------------|------------------|
+| Feature 1 | X/12 | List missing sections |
+| Feature 2 | X/12 | List missing sections |
+
+### 12-Section Production Template
+
+Each spec should include:
+1. **Overview** - Purpose, User Stories, Success Metrics
+2. **Visual Design** - ASCII mockups, Design Tokens
+3. **Component Hierarchy** - Full component tree
+4. **User Interactions** - Actions Matrix, Navigation Flows
+5. **State Management** - Kotlin state classes, State Transitions
+6. **Animations** - Micro-interactions, timing, easing
+7. **API Requirements** - RPC signatures, DTOs
+8. **Accessibility** - A11y requirements, Screen Reader Flow
+9. **Performance** - Targets, Optimizations
+10. **Testing** - Unit, UI, Integration test requirements
+11. **Mockup References** - Figma nodes
+12. **Implementation Checklist** - Server, Client, Feature layer status
+
+---
+
+## Implementation Gap Analysis
+
+### Server Layer Gaps
+| Feature | Missing RPCs | Priority |
+|---------|--------------|----------|
+| Feature 1 | List RPCs | P1/P2/P3 |
+
+### Client Layer Gaps
+| Feature | Missing Components | Priority |
+|---------|-------------------|----------|
+| Feature 1 | Service, Repository, UseCase | P1/P2/P3 |
+
+### Feature Layer Gaps
+| Feature | Missing UI | Priority |
+|---------|-----------|----------|
+| Feature 1 | Screen, Components | P1/P2/P3 |
+
+---
+
+## Priority Action Plan
+
+### Priority 1: Critical (This Week)
+1. **[Item]** - Reason
+2. **[Item]** - Reason
+
+### Priority 2: High (Next Sprint)
+3. **[Item]** - Reason
+4. **[Item]** - Reason
+
+### Priority 3: Medium (Backlog)
+5. **[Item]** - Reason
+6. **[Item]** - Reason
+
+### Priority 4: Low (Future)
+7. **[Item]** - Reason
+8. **[Item]** - Reason
+
+---
+
+## Cross-Feature Dependencies
+
+```
+Feature A → requires → Feature B (blocked)
+Feature C → requires → Feature D (in progress)
+```
+
+---
+
+## Technical Debt
+
+| Area | Description | Effort | Priority |
+|------|-------------|--------|----------|
+| Area 1 | Description | S/M/L | P1/P2/P3 |
+
+---
+
+## Recommendations
+
+### Short-term (1-2 weeks)
+1. Recommendation 1
+2. Recommendation 2
+
+### Medium-term (1 month)
+1. Recommendation 1
+2. Recommendation 2
+
+### Long-term (3+ months)
+1. Recommendation 1
+2. Recommendation 2
+
+---
+
+## Next Steps
+
+1. **Run `/design [Feature]`** - Create/upgrade spec
+2. **Run `/implement [Feature]`** - Implement feature
+3. **Run `/verify [Feature]`** - Validate implementation
+
+---
+
+## Audit Checklist
+
+- [ ] All features identified
+- [ ] Spec quality assessed (12-section template)
+- [ ] Implementation status verified against code
+- [ ] Figma references checked
+- [ ] Dependencies mapped
+- [ ] Priorities assigned
+- [ ] Action plan created
+
+---
+
+## Version History
+
+| Date | Change |
+|------|--------|
+| {{DATE}} | Initial audit created |

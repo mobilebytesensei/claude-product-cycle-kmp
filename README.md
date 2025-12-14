@@ -9,6 +9,8 @@ A comprehensive development workflow template for Kotlin Multiplatform (KMP) pro
 │  CLAUDE PRODUCT CYCLE WORKFLOW                                           │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                          │
+│  /audit                →  Comprehensive feature audit (any model)       │
+│         ↓                  Identify gaps, quality issues, priorities    │
 │  /design [Feature]     →  Create SPEC.md + API.md (Opus)                │
 │         ↓                                                                │
 │  /implement [Feature]  →  Full E2E implementation (Sonnet)              │
@@ -77,6 +79,7 @@ claude-product-cycle-kmp/
 ├── VERSION                             # Current version (semver)
 │
 ├── commands/                           # Slash commands
+│   ├── audit.md                        # Feature audit workflow
 │   ├── implement.md                    # E2E implementation workflow
 │   ├── design.md                       # Design phase workflow
 │   ├── server.md                       # Server layer workflow
@@ -89,12 +92,13 @@ claude-product-cycle-kmp/
 │   ├── CLAUDE.md.template              # Main CLAUDE.md template
 │   ├── design-spec-layer/
 │   │   ├── STATUS.md.template          # Feature status tracker
+│   │   ├── FEATURE_AUDIT.md.template   # Feature audit report template
 │   │   ├── _shared/
 │   │   │   ├── PATTERNS.md             # Architecture patterns
 │   │   │   └── CROSS_UPDATE_RULES.md   # Plan sync rules
 │   │   └── features/
 │   │       └── __FEATURE__/            # Feature scaffold
-│   │           ├── SPEC.md.template
+│   │           ├── SPEC.md.template    # 12-section production template
 │   │           ├── API.md.template
 │   │           └── STATUS.md.template
 │   └── server-layer/
@@ -147,6 +151,9 @@ features: []  # Will be populated as you add features
 
 | Command | Model | Description |
 |---------|-------|-------------|
+| `/audit` | Any | Comprehensive feature audit |
+| `/audit [Feature]` | Any | Audit single feature |
+| `/audit --quick` | Any | Quick summary only |
 | `/design [Feature]` | Opus | Create SPEC.md + API.md |
 | `/implement [Feature]` | Sonnet | Full E2E implementation |
 | `/implement [Feature] --quick` | Sonnet | Quick mode (skip validations) |
