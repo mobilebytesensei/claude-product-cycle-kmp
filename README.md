@@ -95,7 +95,9 @@ claude-product-cycle-kmp/
 │   │   ├── FEATURE_AUDIT.md.template   # Feature audit report template
 │   │   ├── _shared/
 │   │   │   ├── PATTERNS.md             # Architecture patterns
-│   │   │   └── CROSS_UPDATE_RULES.md   # Plan sync rules
+│   │   │   ├── CROSS_UPDATE_RULES.md   # Plan sync rules
+│   │   │   ├── USER_FLOWS.md           # Navigation intelligence
+│   │   │   └── FEATURE_EVOLUTION.md    # How to enhance features
 │   │   └── features/
 │   │       └── __FEATURE__/            # Feature scaffold
 │   │           ├── SPEC.md.template    # 12-section production template
@@ -155,6 +157,8 @@ features: []  # Will be populated as you add features
 | `/audit [Feature]` | Any | Audit single feature |
 | `/audit --quick` | Any | Quick summary only |
 | `/design [Feature]` | Opus | Create SPEC.md + API.md |
+| `/design update [Feature]` | Opus | Update existing spec with enhancements |
+| `/design diff [Feature]` | Any | Compare spec vs implementation |
 | `/implement [Feature]` | Sonnet | Full E2E implementation |
 | `/implement [Feature] --quick` | Sonnet | Quick mode (skip validations) |
 | `/implement improve [Feature]` | Sonnet | Improve existing feature |

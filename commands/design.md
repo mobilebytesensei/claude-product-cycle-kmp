@@ -41,6 +41,9 @@
 /design [Feature] --research [competitor]   → Research-based design
 /design [Feature] --add [section]           → Add specific section
 /design [Feature] --quick                   → Quick spec (minimal)
+/design update [Feature]                    → Update existing spec
+/design update [Feature] --enhance "[desc]" → Enhance with description
+/design diff [Feature]                      → Compare spec vs implementation
 ```
 
 **Examples:**
@@ -59,6 +62,141 @@
 
 # Quick spec for simple feature
 /design Settings --quick
+
+# Update existing spec with enhancement
+/design update ManageMoods --enhance "Add quick mood selection via FAB"
+
+# See what's different between spec and code
+/design diff ManageMoods
+```
+
+---
+
+## /design update - EVOLVING EXISTING FEATURES
+
+> **See**: `_shared/FEATURE_EVOLUTION.md` for complete guide
+
+### When to Use Update
+
+Use `/design update` when:
+- Adding new functionality to existing feature
+- Changing behavior based on user feedback
+- Fixing UX issues discovered during use
+- Adding missing edge cases
+
+### Update Workflow
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│  /design update [Feature] --enhance "[description]"                  │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  1. READ existing SPEC.md                                           │
+│                                                                      │
+│  2. ANALYZE enhancement request                                     │
+│     - What sections need updating?                                  │
+│     - Any new components needed?                                    │
+│     - State management changes?                                     │
+│     - New APIs required?                                            │
+│                                                                      │
+│  3. UPDATE relevant sections                                        │
+│     - Section 2: Visual Design (new mockups)                        │
+│     - Section 3: Component Hierarchy (new components)               │
+│     - Section 4: User Interactions (new actions)                    │
+│     - Section 5: State Management (new states)                      │
+│     - Section 7: API Requirements (if needed)                       │
+│     - Section 12: Uncheck affected checklist items                  │
+│                                                                      │
+│  4. CROSS-UPDATE related files                                      │
+│     - Mark STATUS.md as "Needs Update"                              │
+│     - Update API.md if new RPCs                                     │
+│     - Add changelog entry                                           │
+│                                                                      │
+│  5. REPORT changes                                                  │
+│     - Summary of sections updated                                   │
+│     - New components/states added                                   │
+│     - Implementation notes                                          │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Example: Update ManageMoods
+
+```
+User: /design update ManageMoods --enhance "Add quick mood FAB on home screen"
+
+Claude:
+┌─────────────────────────────────────────────────────────────────────┐
+│  SPEC UPDATE: ManageMoods                                           │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  Enhancement: Add quick mood FAB on home screen                     │
+│                                                                      │
+│  📋 Sections Updated:                                               │
+│  ├── Section 2: Visual Design                                       │
+│  │   └── Added QuickMoodFAB + QuickMoodSheet mockups                │
+│  ├── Section 3: Component Hierarchy                                 │
+│  │   └── Added QuickMoodFAB, QuickMoodSheet, MoodEmojiRow           │
+│  ├── Section 4: User Interactions                                   │
+│  │   └── Added OnQuickMoodClick, OnEmojiSelect actions              │
+│  ├── Section 5: State Management                                    │
+│  │   └── Added showQuickMoodSheet, quickSelectedMood states         │
+│  └── Section 12: Implementation Checklist                           │
+│       └── Unchecked: QuickMoodFAB, QuickMoodSheet                   │
+│                                                                      │
+│  📝 Cross-updates:                                                  │
+│  ├── STATUS.md → "Needs Update"                                     │
+│  └── Changelog → "v1.1.0: Added Quick Mood FAB"                     │
+│                                                                      │
+│  ✅ Ready for: /implement ManageMoods                               │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## /design diff - SPEC vs CODE COMPARISON
+
+### When to Use Diff
+
+Use `/design diff` to:
+- Check if implementation matches spec
+- Find undocumented code changes
+- Discover spec features not yet implemented
+- Pre-implementation verification
+
+### Diff Output Format
+
+```
+User: /design diff ManageMoods
+
+Claude:
+┌─────────────────────────────────────────────────────────────────────┐
+│  SPEC vs CODE: ManageMoods                                          │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  ✅ IN SYNC (implemented as specified)                              │
+│  ├── 4-step mood selection flow                                     │
+│  ├── ADD mode (first time) vs UPDATE mode                          │
+│  ├── MoodSelectionCard, EmotionChip components                      │
+│  ├── MovieFinderEngine processing animation                         │
+│  └── All 6 RPCs implemented                                         │
+│                                                                      │
+│  ⚠️  SPEC AHEAD (not yet implemented)                               │
+│  ├── QuickMoodFAB (added v1.1.0)                                    │
+│  ├── QuickMoodSheet component                                        │
+│  └── OnQuickMoodClick action                                        │
+│                                                                      │
+│  🔴 CODE AHEAD (not in spec - need to document)                     │
+│  └── MoodHistoryList in profile                                     │
+│                                                                      │
+│  📊 Sync Score: 85% (17/20 items)                                   │
+│                                                                      │
+│  Recommendations:                                                    │
+│  1. /implement ManageMoods → implement SPEC AHEAD items             │
+│  2. /design update ManageMoods → document CODE AHEAD items          │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
 ---

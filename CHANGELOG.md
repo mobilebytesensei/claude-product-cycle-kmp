@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2024-12-14
+
+### Added
+- **Feature Evolution Guide** (`FEATURE_EVOLUTION.md`) - How to enhance existing features
+  - Enhancement Request template
+  - Inline spec comments
+  - Chat-based spec evolution
+  - Cross-feature impact analysis
+  - Spec version control
+
+- **Design Update Command** (`/design update [Feature]`)
+  - Update existing specs with `--enhance "[description]"`
+  - Automatic section detection and update
+  - Cross-update to STATUS.md and changelog
+  - Ready for implementation notification
+
+- **Design Diff Command** (`/design diff [Feature]`)
+  - Compare spec vs implementation
+  - Show IN SYNC, SPEC AHEAD, CODE AHEAD items
+  - Sync score calculation
+  - Recommendations for next steps
+
+- **User Flows Documentation** (`USER_FLOWS.md`)
+  - Complete navigation intelligence documentation
+  - App launch flow decision tree
+  - Authentication → Mood check flow
+  - Session restore patterns
+  - Deep link handling
+
+- **Intelligent Navigation Pattern**
+  - Added to PATTERNS.md
+  - Two-layer navigation (Splash + AuthenticatedNavbar)
+  - Single source of truth for mood-based navigation
+
+---
+
 ## [1.3.0] - 2024-12-13
 
 ### Added
