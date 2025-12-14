@@ -361,14 +361,92 @@ Proceed to generate comprehensive SPEC.md from this analysis?
 claude-product-cycle/design-spec-layer/
 ├── STATUS.md                         # ENTRY POINT - All features
 ├── features/[feature]/
-│   ├── SPEC.md                       # What to build (UI, flows)
+│   ├── SPEC.md                       # What to build (14 sections)
 │   ├── API.md                        # APIs needed (RPC signatures)
 │   ├── STATUS.md                     # Feature implementation status
-│   └── mockups/                      # Reference mockups (optional)
-│       └── [feature]-main.png
+│   └── mockups/                      # Reference mockups (AUTO-DETECTED)
+│       ├── README.md                 # How to use mockups folder
+│       ├── main-screen.png           # Primary screen mockup
+│       ├── states/                   # Alternative states
+│       │   ├── loading.png
+│       │   ├── empty.png
+│       │   └── error.png
+│       ├── components/               # Component close-ups
+│       └── ai-generated/             # AI-generated mockups
 ├── SERVER_PLAN.md                    # Backend implementation
 └── SCHEMA_REGISTRY.md                # Central table/RPC registry
 ```
+
+### SPEC.md Template (14 Sections)
+
+| Section | Description |
+|---------|-------------|
+| 1. Overview | Purpose, user stories, success metrics |
+| 2. Visual Design | ASCII mockups, states, design tokens |
+| 3. Component Hierarchy | Tree structure, specifications |
+| 4. User Interactions | Actions matrix, navigation flows |
+| 5. State Management | Screen state, transitions |
+| 6. Animations | Transitions, micro-interactions |
+| 7. API Requirements | RPC signatures, DTOs |
+| 8. Enhancement Opportunity Map | Gaps, future enhancements, priority matrix |
+| 9. AI Mockup Generation | Prompts for Midjourney/DALL-E/Figma AI |
+| 10. Mockup References | Reference images, sources |
+| 11. Accessibility | A11y requirements, semantic labels |
+| 12. Performance | Metrics, targets, optimizations |
+| 13. Testing | Unit, UI, integration tests |
+| 14. Implementation Checklist | Server, client, feature layers |
+
+---
+
+## MOCKUPS AUTO-DETECTION
+
+When running `/design [Feature]`, Claude **automatically checks** for mockups:
+
+```
+┌───────────────────────────────────────────────────────────────────┐
+│  📁 MOCKUP AUTO-DETECTION                                          │
+├───────────────────────────────────────────────────────────────────┤
+│                                                                    │
+│  SCAN: features/[feature]/mockups/                                 │
+│                                                                    │
+│  DETECT FILE TYPES:                                                │
+│  ├─→ *.png, *.jpg, *.jpeg, *.webp                                 │
+│  ├─→ Figma links in README.md                                     │
+│  └─→ AI-generated subfolder                                       │
+│                                                                    │
+│  IF MOCKUPS FOUND:                                                 │
+│  ├─→ Read and analyze each image                                  │
+│  ├─→ Generate Mockup Analysis Report                              │
+│  ├─→ Extract components and design tokens                         │
+│  └─→ Use as primary reference for SPEC generation                 │
+│                                                                    │
+│  IF NO MOCKUPS:                                                    │
+│  ├─→ Prompt user: "Do you have a mockup to drop?"                 │
+│  ├─→ Generate AI prompts for mockup creation (Section 9)          │
+│  └─→ Create spec from existing patterns                           │
+│                                                                    │
+└───────────────────────────────────────────────────────────────────┘
+```
+
+### Dropping a Mockup
+
+Simply copy your mockup image to the feature's mockups folder:
+
+```bash
+# Drop mockup for Reviews feature
+cp ~/Downloads/reviews-screen.png \
+   claude-product-cycle/design-spec-layer/features/reviews/mockups/main-screen.png
+
+# Then run design (Claude auto-detects it)
+/design Reviews
+```
+
+Claude will:
+1. Detect the image in `mockups/`
+2. Read and analyze it visually
+3. Generate comprehensive SPEC.md based on mockup
+4. Create ASCII mockups that match the image
+5. Extract design tokens (colors, spacing, typography)
 
 ---
 
@@ -379,9 +457,11 @@ claude-product-cycle/design-spec-layer/
 │                    /design [Feature] WORKFLOW                      │
 ├───────────────────────────────────────────────────────────────────┤
 │                                                                    │
-│  STEP 0: MOCKUP INTAKE (If provided)                              │
-│  ├─→ Read mockup image (local path, Figma, or URL)                │
-│  ├─→ Perform visual analysis (components, tokens, interactions)   │
+│  STEP 0: MOCKUP AUTO-DETECTION                                    │
+│  ├─→ Scan features/[feature]/mockups/ for images                  │
+│  ├─→ If found: Read and analyze mockups                           │
+│  ├─→ If --mockup provided: Use explicit path                      │
+│  ├─→ If --figma provided: Fetch from Figma via MCP                │
 │  ├─→ Generate Mockup Analysis Report                              │
 │  └─→ Get user confirmation on extracted elements                  │
 │                                                                    │

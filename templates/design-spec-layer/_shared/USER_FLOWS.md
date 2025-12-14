@@ -49,8 +49,9 @@
 │  ┌────────────────────────────────────┐  │                    ┌───────────▼──────┐ │   │
 │  │         BOTTOM TAB NAVIGATION       │  │                    │  Movie Finder   │ │   │
 │  │  ┌──────┬──────┬──────┬──────┬────┐ │  │                    │   Engine (4)    │ │   │
-│  │  │ HOME │SUPRS │MYMOOD│WATCH │PROF│ │  │                    └────────┬────────┘ │   │
+│  │  │ HOME │SUPRS │*MOOD*│WATCH │PROF│ │  │                    └────────┬────────┘ │   │
 │  │  │  🏠  │  🎲  │  😊  │  📋  │ 👤 │ │  │                             │          │   │
+│  │  │      │      │ ^^^^ │      │    │ │  │  * = DEFAULT TAB (selected on entry)  │   │
 │  │  └──┬───┴──┬───┴──┬───┴──┬───┴──┬─┘ │  └─────────────────────────────┼──────────┘   │
 │  │     │      │      │      │      │   │◄────────────────────────────────┘              │
 │  └─────┼──────┼──────┼──────┼──────┼───┘                                                │
@@ -295,6 +296,58 @@
 
 ---
 
+## Bottom Tab Default Behavior
+
+**Default Tab: MyMood (😊)**
+
+When a user enters the authenticated area with an active mood, the bottom navigation bar defaults to the **MyMood** tab, not Home.
+
+### Why MyMood as Default?
+
+| Reason | Explanation |
+|--------|-------------|
+| **Mood-Centric UX** | The app's core value proposition is mood-based recommendations |
+| **Immediate Relevance** | Shows movies matching user's current mood immediately |
+| **Engagement** | Encourages users to engage with their mood and personalized content |
+| **Differentiation** | Distinguishes from other movie apps that default to generic home feeds |
+
+### Implementation Details
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│  AuthenticatedNavbarNavigationScreen.kt                              │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  NavHost(                                                            │
+│      startDestination = MyMoodDestination,  // ← DEFAULT TAB        │
+│      ...                                                             │
+│  )                                                                   │
+│                                                                      │
+│  InitialTab.MY_MOOD (used in navigation parameters)                  │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Tab Order (Left to Right)
+
+| Position | Tab | Icon | Role |
+|----------|-----|------|------|
+| 1 | Home | 🏠 | Discovery, trending, all content |
+| 2 | Surprise Me | 🎲 | Random/serendipity features |
+| **3** | **MyMood** | **😊** | **DEFAULT - Mood-based personalization** |
+| 4 | Watchlist | 📋 | User's saved movies |
+| 5 | Profile | 👤 | User settings, stats |
+
+### Post-Mood Selection Flow
+
+```
+Mood Selection Complete → Navigate to MyMood Tab (not Home)
+                          └── Shows curated movies for selected mood
+                          └── User immediately sees personalized content
+```
+
+---
+
 ## Overview
 
 The app uses a multi-layer navigation intelligence system to provide seamless user experiences:
@@ -311,7 +364,12 @@ The app uses a multi-layer navigation intelligence system to provide seamless us
 |                                                                      |
 |  Layer 2: AuthenticatedNavbar (Mood Check)                          |
 |  +-- Has active mood? → No → Mood Selection Flow (ADD mode)         |
-|  +-- Has active mood? → Yes → Home (normal navigation)              |
+|  +-- Has active mood? → Yes → MyMood Tab (DEFAULT)                  |
+|                                                                      |
+|  DEFAULT TAB BEHAVIOR:                                               |
+|  +-- When user enters Bottom Tab Navigation → MyMood is selected    |
+|  +-- NavHost startDestination = MyMoodDestination                   |
+|  +-- This emphasizes the app's mood-centric experience              |
 |                                                                      |
 +--------------------------------------------------------------------+
 ```
@@ -668,5 +726,6 @@ private fun checkActiveUserMood() {
 
 | Date | Change |
 |------|--------|
+| 2024-12-14 | Added Bottom Tab Default Behavior section (MyMood as default tab) |
 | 2024-12-14 | Added Complete App Flow Map, Enhancement Opportunity Map |
 | 2024-12-14 | Initial document created |

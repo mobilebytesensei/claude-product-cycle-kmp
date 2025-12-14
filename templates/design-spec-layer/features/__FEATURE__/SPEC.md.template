@@ -1,117 +1,417 @@
 # {{FEATURE_NAME}} - Feature Specification
 
-> **Purpose**: [One-line description]
-> **User Value**: [Why users need this]
+> **Version**: 1.0
 > **Last Updated**: {{DATE}}
+> **Status**: Planned
+> **Mockups**: See `mockups/` folder for reference images
 
 ---
 
 ## 1. Overview
 
-### 1.1 Feature Summary
-[2-3 sentences describing the feature]
+### 1.1 Purpose
+[One-line description of what this feature does]
 
-### 1.2 User Stories
-- As a user, I want to [action] so that [benefit]
-- As a user, I want to [action] so that [benefit]
+### 1.2 User Value
+[Why users need this feature - the problem it solves]
+
+### 1.3 User Stories
+
+| As a... | I want to... | So that... |
+|---------|-------------|------------|
+| User | [action] | [benefit] |
+| User | [action] | [benefit] |
+
+### 1.4 Success Metrics
+
+| Metric | Target |
+|--------|--------|
+| [Metric name] | [Target value] |
 
 ---
 
-## 2. Screen Layout
+## 2. Visual Design
 
-### 2.1 ASCII Mockup
+### 2.1 Screen Layout (ASCII Mockup)
 
 ```
+┌─────────────────────────────────────────────────────────┐
+│  ← Back          [Title]                            ⋮   │  ← TopBar
+├─────────────────────────────────────────────────────────┤
+│                                                          │
+│  ╔══════════════════════════════════════════════════════╗
+│  ║     SECTION 1 - Header/Banner                        ║
+│  ║     [Description of content]                         ║
+│  ╚══════════════════════════════════════════════════════╝
+│                                                          │
+│  ╔══════════════════════════════════════════════════════╗
+│  ║     SECTION 2 - Main Content                         ║
+│  ║     [Description of content]                         ║
+│  ╚══════════════════════════════════════════════════════╝
+│                                                          │
+│  ╔══════════════════════════════════════════════════════╗
+│  ║     SECTION 3 - Secondary Content                    ║
+│  ║     [Description of content]                         ║
+│  ╚══════════════════════════════════════════════════════╝
+│                                                          │
+├─────────────────────────────────────────────────────────┤
+│  [🏠]    [🎲]    [😊]    [📋]    [👤]                  │  ← Bottom Nav (if applicable)
+└─────────────────────────────────────────────────────────┘
+```
+
+### 2.2 Alternative States
+
+#### Loading State
+```
 ┌─────────────────────────────────────────┐
-│  ← Back          [Title]            ⋮   │  ← TopBar
-├─────────────────────────────────────────┤
-│                                         │
-│  ┌─────────────────────────────────┐   │
-│  │     Section 1                    │   │
-│  └─────────────────────────────────┘   │
-│                                         │
-│  ┌─────────────────────────────────┐   │
-│  │     Section 2                    │   │
-│  └─────────────────────────────────┘   │
-│                                         │
+│         [Skeleton loaders]              │
 └─────────────────────────────────────────┘
 ```
 
-### 2.2 Sections Table
-
-| # | Section | Description | API | Priority |
-|---|---------|-------------|-----|----------|
-| 1 | [Name] | [What it shows] | [RPC name] | P0 |
-
----
-
-## 3. User Interactions
-
-### 3.1 Actions Table
-
-| Action | Trigger | Result | API Call |
-|--------|---------|--------|----------|
-| [Action] | [Trigger] | [Result] | [RPC] |
-
-### 3.2 State Transitions
-
+#### Empty State
 ```
-[Initial] → Loading → [Content | Empty | Error]
+┌─────────────────────────────────────────┐
+│              [Illustration]              │
+│           No [items] yet                 │
+│      [Call to action button]            │
+└─────────────────────────────────────────┘
 ```
 
+#### Error State
+```
+┌─────────────────────────────────────────┐
+│              [Error icon]               │
+│        Something went wrong             │
+│           [Retry button]                │
+└─────────────────────────────────────────┘
+```
+
+### 2.3 Design Tokens
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `feature.bg` | Surface | Background color |
+| `feature.card.radius` | 16dp | Card corner radius |
+| `feature.spacing` | 16dp | Section spacing |
+
 ---
 
-## 4. UI Components
+## 3. Component Hierarchy
 
-| Component | Props | Reusable? | Design System? |
-|-----------|-------|-----------|----------------|
-| [Name] | [props] | Yes/No | Use [Component] |
+```
+{{FEATURE_NAME}}Screen/
+├── TopBar
+│   ├── BackButton (optional)
+│   ├── Title
+│   └── ActionButtons
+├── Content (scrollable)
+│   ├── Section1
+│   │   └── [Components]
+│   ├── Section2
+│   │   └── [Components]
+│   └── Section3
+│       └── [Components]
+└── BottomBar (optional)
+```
+
+### Component Specifications
+
+| Component | Size | Interaction |
+|-----------|------|-------------|
+| [Component] | [dimensions] | [tap/swipe/etc] |
 
 ---
 
-## 5. Data Requirements
+## 4. User Interactions
 
-### 5.1 Domain Model
+### 4.1 Actions Matrix
+
+| Action | Trigger | Result | Animation |
+|--------|---------|--------|-----------|
+| [Action] | [Trigger] | [Result] | [Animation type] |
+
+### 4.2 Navigation Flows
+
+```
+{{FEATURE_NAME}}
+    └─→ [Destination 1] (tap [element])
+    └─→ [Destination 2] (tap [element])
+    └─→ [Back] (tap back or swipe)
+```
+
+---
+
+## 5. State Management
+
+### 5.1 Screen State
 
 ```kotlin
-data class {{FEATURE_NAME}}(
-    val id: String,
+data class {{FEATURE_NAME}}State(
+    val uiState: {{FEATURE_NAME}}UiState = {{FEATURE_NAME}}UiState.Loading,
+    val items: List<Item> = emptyList(),
+    val isRefreshing: Boolean = false,
+)
+
+sealed interface {{FEATURE_NAME}}UiState {
+    data object Loading : {{FEATURE_NAME}}UiState
+    data object Content : {{FEATURE_NAME}}UiState
+    data object Empty : {{FEATURE_NAME}}UiState
+    data class Error(val message: String) : {{FEATURE_NAME}}UiState
+}
+```
+
+### 5.2 State Transitions
+
+```
+[Loading] → loadData → [Content | Empty | Error]
+[Content] → refresh → [Refreshing] → [Content]
+[Error] → retry → [Loading] → [Content | Error]
+```
+
+---
+
+## 6. Animations & Micro-interactions
+
+| Element | Animation | Duration | Easing |
+|---------|-----------|----------|--------|
+| Content appear | Fade + slide up | 300ms | FastOutSlowIn |
+| Pull refresh | Material pull | - | Standard |
+| Card tap | Scale 0.98 | 100ms | EaseOut |
+
+---
+
+## 7. API Requirements
+
+### 7.1 RPC Signatures
+
+```sql
+-- [Description of RPC]
+get_{{feature}}_data(p_user_id UUID, p_limit INTEGER, p_offset INTEGER)
+  RETURNS TABLE(columns...)
+```
+
+### 7.2 DTOs
+
+```kotlin
+@Serializable
+data class {{FEATURE_NAME}}Dto(
+    @SerialName("id") val id: String,
     // fields
 )
 ```
 
-### 5.2 State Model
+---
 
-```kotlin
-data class {{FEATURE_NAME}}State(
-    val isLoading: Boolean = false,
-    val items: List<Item> = emptyList(),
-    val error: String? = null,
-)
+## 8. Enhancement Opportunity Map
+
+### 8.1 Current Implementation Gaps
+
+| Gap ID | Description | Impact | Effort | Priority |
+|--------|-------------|--------|--------|----------|
+| GAP-01 | [Gap description] | High/Medium/Low | S/M/L/XL | P0/P1/P2 |
+
+### 8.2 Future Enhancements
+
+| Enhancement ID | Description | User Value | Dependencies | Phase |
+|----------------|-------------|------------|--------------|-------|
+| ENH-01 | [Enhancement description] | [Value to user] | [Dependencies] | Phase 2/3 |
+
+### 8.3 Enhancement Priority Matrix
+
+```
+                    HIGH IMPACT
+                         │
+           ┌─────────────┼─────────────┐
+           │   ENH-01    │   ENH-02    │
+    LOW    │   Quick     │    Big      │
+   EFFORT  │   Wins      │   Bets      │
+           ├─────────────┼─────────────┤
+           │   ENH-03    │   ENH-04    │
+           │   Fill-ins  │   Time      │
+    HIGH   │             │   Sinks     │
+   EFFORT  │             │             │
+           └─────────────┴─────────────┘
+                         │
+                    LOW IMPACT
+```
+
+### 8.4 User Feedback Integration
+
+| Feedback Source | Request | Enhancement Link | Status |
+|-----------------|---------|------------------|--------|
+| [Source] | [User request] | ENH-XX | Planned/In Progress/Done |
+
+---
+
+## 9. AI Mockup Generation
+
+### 9.1 Design Context
+
+Use these prompts with AI design tools (Midjourney, DALL-E, Figma AI, etc.)
+
+#### Base Style Prompt
+```
+Mobile app screen, iOS/Android, Material Design 3, dark mode,
+clean minimal UI, movie streaming app, purple accent color (#8B5CF6),
+rounded corners, subtle shadows, modern typography
+```
+
+#### Screen-Specific Prompt
+```
+[BASE STYLE] +
+
+{{FEATURE_NAME}} screen showing:
+- [Section 1 description]
+- [Section 2 description]
+- [Section 3 description]
+
+UI elements: [list key elements]
+Color scheme: Dark background (#121212), purple accents, white text
+Typography: Product Sans or Inter, clean hierarchy
+```
+
+### 9.2 Component Prompts
+
+#### [Component Name] Prompt
+```
+Mobile app UI component, [component description],
+Material Design 3, dark theme, purple accent (#8B5CF6),
+[specific styling details], high fidelity mockup
+```
+
+### 9.3 Figma Plugin Prompts (for Figma AI)
+
+```json
+{
+  "screen": "{{FEATURE_NAME}}",
+  "style": "material_design_3",
+  "theme": "dark",
+  "accent": "#8B5CF6",
+  "components": [
+    {
+      "type": "card",
+      "content": "[description]",
+      "position": "top"
+    },
+    {
+      "type": "list",
+      "content": "[description]",
+      "position": "center"
+    }
+  ]
+}
+```
+
+### 9.4 Design Token Reference for AI
+
+```
+Primary: #8B5CF6 (purple)
+Surface: #1E1E1E
+Background: #121212
+On Surface: #FFFFFF
+Secondary Text: #9CA3AF
+Card Background: #262626
+Border Radius: 16dp (cards), 8dp (buttons), 24dp (chips)
+Spacing: 8dp, 16dp, 24dp grid
 ```
 
 ---
 
-## 6. API Requirements
+## 10. Mockup References
 
-| RPC Name | Parameters | Returns | Exists? |
-|----------|------------|---------|---------|
-| [name] | [params] | [type] | ❌ |
+### 10.1 Reference Images
+
+Place mockup images in: `mockups/` folder
+
+| File | Description | Source |
+|------|-------------|--------|
+| `main-screen.png` | Main screen layout | Figma/AI Generated |
+| `empty-state.png` | Empty state design | Figma/AI Generated |
+| `component-detail.png` | Component close-up | Figma/AI Generated |
+
+### 10.2 Design Sources
+
+| Source | Link/Reference | Priority |
+|--------|---------------|----------|
+| Figma | [Node ID or URL] | Primary |
+| AI Generated | `mockups/ai-generated/` | Secondary |
+| Competitor Reference | [App name] | Inspiration |
+
+### 10.3 Mockup Verification Checklist
+
+When dropping a mockup for Claude to analyze:
+
+- [ ] Image is clear and high resolution (min 1080px wide)
+- [ ] Shows complete screen (not cropped)
+- [ ] Includes key UI elements mentioned in spec
+- [ ] File named descriptively (e.g., `feature-main-dark.png`)
+- [ ] Placed in correct folder (`mockups/`)
 
 ---
 
-## 7. Edge Cases
+## 11. Accessibility (A11y)
 
-| Scenario | Behavior | UI Feedback |
-|----------|----------|-------------|
-| No internet | Show cached | Toast |
-| Empty results | Show empty state | Illustration |
-| API error | Retry logic | Snackbar |
+| Element | Requirement |
+|---------|-------------|
+| [Element] | "[Content description]" |
+
+### Screen Reader Flow
+```
+1. "[First element announcement]"
+2. "[Second element announcement]"
+```
 
 ---
 
-## Changelog
+## 12. Performance Requirements
 
-| Date | Change |
-|------|--------|
-| {{DATE}} | Initial spec |
+| Metric | Target |
+|--------|--------|
+| Initial load | < 800ms |
+| Scroll FPS | 60fps |
+| Memory | < 100MB |
+
+---
+
+## 13. Testing Requirements
+
+### Unit Tests
+- [ ] ViewModel state management
+- [ ] Business logic
+
+### UI Tests
+- [ ] User interactions
+- [ ] Navigation flows
+
+### Integration Tests
+- [ ] E2E data flow
+
+---
+
+## 14. Implementation Checklist
+
+### Server Layer
+- [ ] RPC functions deployed
+- [ ] Database migrations applied
+
+### Client Layer
+- [ ] DTO created
+- [ ] Service implemented
+- [ ] Repository implemented
+- [ ] UseCase(s) created
+- [ ] Mappers created
+
+### Feature Layer
+- [ ] ViewModel implemented
+- [ ] Screen implemented
+- [ ] Components created
+- [ ] Navigation registered
+- [ ] DI module registered
+
+---
+
+## Version History
+
+| Date | Version | Change |
+|------|---------|--------|
+| {{DATE}} | 1.0 | Initial spec |

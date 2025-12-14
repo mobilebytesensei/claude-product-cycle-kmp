@@ -1,7 +1,7 @@
 # Command Reference
 
 > **Purpose**: Single source of truth for ALL slash commands
-> **Version**: 1.4.0
+> **Version**: 1.5.0
 > **Last Updated**: 2024-12-14
 
 ---
@@ -151,7 +151,7 @@ Show feature list with status.
 ```
 
 #### `/design [Feature]`
-Create or review feature spec (12-section production template).
+Create or review feature spec (14-section production template).
 
 ```bash
 # Create new spec
@@ -162,6 +162,32 @@ Create or review feature spec (12-section production template).
 
 # Output: Full SPEC.md + API.md in features/[feature]/
 ```
+
+**NEW: Mockups Auto-Detection**
+
+When running `/design [Feature]`, Claude automatically checks `features/[feature]/mockups/` for images:
+
+```bash
+# Drop a mockup first
+cp ~/Downloads/mockup.png features/reviews/mockups/main-screen.png
+
+# Then run design (mockup auto-detected)
+/design Reviews
+
+# Claude will:
+# 1. Detect mockup in folder
+# 2. Analyze visual elements
+# 3. Generate SPEC based on mockup
+# 4. Create matching ASCII mockups
+```
+
+**NEW: SPEC Sections (v1.5.0)**
+
+| Section | Description |
+|---------|-------------|
+| 8. Enhancement Map | Gaps, future enhancements, priority matrix |
+| 9. AI Mockup Prompts | Ready-to-use prompts for Midjourney/DALL-E |
+| 10. Mockup References | Reference images, sources |
 
 #### `/design [Feature] --mockup [path]`
 Design from local mockup image.
@@ -570,6 +596,7 @@ Switch to Sonnet model.
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.5.0 | 2024-12-14 | Added Enhancement Opportunity Map, AI Mockup Generation, mockups auto-detection, 14-section SPEC template |
 | 1.4.0 | 2024-12-14 | Added `/design update`, `/design diff`, FEATURE_EVOLUTION.md |
 | 1.3.0 | 2024-12-13 | Added `/audit` command |
 | 1.2.0 | 2024-12-13 | Added mockup integration to `/design` |

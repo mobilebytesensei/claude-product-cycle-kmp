@@ -5,6 +5,51 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2024-12-14
+
+### Added
+- **Enhanced SPEC Template** - Upgraded from 12 to 14 sections
+  - Section 8: **Enhancement Opportunity Map**
+    - Current Implementation Gaps tracking (GAP-01, GAP-02...)
+    - Future Enhancements planning (ENH-01, ENH-02...)
+    - Priority Matrix (Quick Wins / Big Bets / Fill-ins / Time Sinks)
+    - User Feedback Integration table
+  - Section 9: **AI Mockup Generation Prompts**
+    - Base style prompts for Midjourney/DALL-E/Figma AI
+    - Screen-specific prompts with design tokens
+    - Component prompts for individual UI elements
+    - Figma plugin JSON prompts
+    - Design token reference for AI tools
+  - Section 10: **Mockup References**
+    - Reference images table with sources
+    - Design sources (Figma, AI-generated, competitors)
+    - Mockup verification checklist
+
+- **Mockups Folder Structure** - Standardized mockup organization
+  - `features/[feature]/mockups/` - Auto-detected folder
+  - `mockups/README.md` - Comprehensive usage guide
+  - `mockups/states/` - Loading, empty, error states
+  - `mockups/components/` - Individual component close-ups
+  - `mockups/ai-generated/` - AI-generated mockups subfolder
+
+- **Mockups Auto-Detection** - `/design` automatically scans for mockups
+  - Scans `features/[feature]/mockups/` folder
+  - Detects PNG, JPG, JPEG, WEBP files
+  - Reads Figma links from mockups/README.md
+  - Generates Mockup Analysis Report
+  - Uses mockups as primary reference for SPEC generation
+
+### Changed
+- **SPEC.md Template** - Now 14 sections (was 12)
+  - Reordered sections for better design-first workflow
+  - Added design tokens section to Visual Design
+  - Enhanced component specifications with states and design system mapping
+- **design.md Command** - Added auto-detection workflow
+  - Step 0 now auto-scans for mockups before gathering context
+  - Added mockups folder structure documentation
+
+---
+
 ## [1.4.0] - 2024-12-14
 
 ### Added
